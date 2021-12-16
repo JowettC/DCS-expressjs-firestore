@@ -12,19 +12,39 @@ app.use(bodyParser.json())
 
 // database stuff
 const db = fs.firestore();
-const usersDb = db.collection('users'); 
+
+// constructors
+const User = require('./models/user')
+
+// add user
+app.post('/user', async function (req, res) {
+    try {
+        const data = req.body
+        const results =  await db.collection('users').doc(data.username).set(data)
+        res.end("Successfully Created");
+    } catch (e){
+        res.json({error:e})
+    }
+});
 
 
-
-
-app.get('/', async function(req,res){
-    const user = await db.collection('users').doc('CMbXajCUBYHAI8cF8k5S').get();
-    console.log(user)
-    res.end(user);
+app.get('/users', async function (req, res) {
+    try {
+        const user = await db.collection('users').get();
+        var response = []
+        user.forEach(doc => {
+            res.push(doc.data())
+          });
+        res.json({data:response})
+    }
+    catch(e){
+        res.end("error: " + e);
+    }
+    
 });
 
 var server = app.listen(8080, function () {
-    var host =  "localhost"
+    var host = "localhost"
     var port = server.address().port
     console.log("Example app listening at http://%s:%s", host, port)
- })
+})
