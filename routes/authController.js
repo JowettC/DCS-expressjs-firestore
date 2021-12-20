@@ -3,7 +3,6 @@ const { Password, BadRequestError } = require('@smudsc/express');
 require('dotenv').config();
 const fs = require('../config/firebase-config');
 const db = fs.firestore();
-
 const signUp = async (req, res) => {
 	const { email, password } = req.body;
 
@@ -27,7 +26,7 @@ const signUp = async (req, res) => {
 	// Store it on session object
 	req.session = { jwt: userJwt };
 
-	res.status(201).send(data.email);
+	res.status(201).send({user:data.email,token:userJwt});
 };
 
 const signIn = async (req, res) => {
@@ -59,7 +58,7 @@ const signIn = async (req, res) => {
 
 	// Store it on session object
 	req.session = { jwt: userJwt };
-	res.status(200).send(existingUser);
+	res.status(200).send({user:existingUser[0].email,token:userJwt});
 };
 
 const signOut = (req, res) => {
