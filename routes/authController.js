@@ -4,7 +4,7 @@ require('dotenv').config();
 const fs = require('../config/firebase-config');
 const db = fs.firestore();
 const signUp = async (req, res) => {
-	const { email, password } = req.body;
+	const { email, password, username } = req.body;
 
 	const userRef = db.collection('users');
 	const snapshot = await userRef.where('email', '==', email).get();
@@ -16,17 +16,17 @@ const signUp = async (req, res) => {
 	}
 
 	const hashedPassword = await Password.toHash(password);
-	const data = { email, password: hashedPassword };
+	const data = { email, password: hashedPassword, username };
 
 	await db.collection('users').doc().set(data);
 
 	// Generate JWT
-	const userJwt = jwt.sign({ email: email }, process.env.JWT_KEY);
+	const userJwt = jwt.sign({ email, username }, process.env.JWT_KEY);
 
 	// Store it on session object
 	req.session = { jwt: userJwt };
 
-	res.status(201).send({user:data.email,token:userJwt});
+	res.status(201).send({ user: data.email, token: userJwt });
 };
 
 const signIn = async (req, res) => {
@@ -52,13 +52,13 @@ const signIn = async (req, res) => {
 
 	// Generate JWT
 	const userJwt = jwt.sign(
-		{ email: existingUser[0].email },
+		{ email: existingUser[0].email, username: existingUser[0].username },
 		process.env.JWT_KEY
 	);
 
 	// Store it on session object
 	req.session = { jwt: userJwt };
-	res.status(200).send({user:existingUser[0].email,token:userJwt});
+	res.status(200).send({ user: existingUser[0].email, token: userJwt });
 };
 
 const signOut = (req, res) => {
