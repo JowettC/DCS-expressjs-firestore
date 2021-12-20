@@ -11,6 +11,9 @@ const {
 	signOut,
 	getCurrentUser,
 } = require('./routes/authController');
+
+
+
 const express = require('express');
 const { body } = require('express-validator');
 const cookieSession = require('cookie-session');
@@ -60,6 +63,21 @@ app.post(
 	validateRequest,
 	signUp
 );
+
+// get list of products
+app.get('/api/products', async (req,res) => {
+	
+});
+
+// get items in user's cart
+app.get('/api/cart',requireAuth, async (req,res) => {
+	
+});
+
+// make changes in user cart
+app.post('/api/cart',requireAuth, async (req,res) => {
+	
+});
 
 app.all('*', () => {
 	throw new NotFoundError();
