@@ -1,3 +1,4 @@
+
 const {
 	errorHandler,
 	NotFoundError,
@@ -11,6 +12,11 @@ const {
 	signOut,
 	getCurrentUser,
 } = require('./routes/authController');
+
+
+const fs = require('./config/firebase-config');
+const db = fs.firestore();
+
 
 
 
@@ -66,16 +72,21 @@ app.post(
 
 // get list of products
 app.get('/api/products', async (req,res) => {
+	const itemRef = db.collection('items');
+	const snapshot = await itemRef.get();
+	const items = await snapshot.docs.map((doc) => doc.data());
+	// console.log(items)
+	res.status(200).send({ items:  items});
 	
 });
 
 // get items in user's cart
-app.get('/api/cart',requireAuth, async (req,res) => {
+app.get('/api/cart', requireAuth, async (req,res) => {
 	
 });
 
 // make changes in user cart
-app.post('/api/cart',requireAuth, async (req,res) => {
+app.post('/api/cart', requireAuth, async (req,res) => {
 	
 });
 
