@@ -81,8 +81,11 @@ app.get('/api/products', async (req,res) => {
 });
 
 // get items in user's cart
-app.get('/api/cart', requireAuth, async (req,res) => {
-	
+app.get('/api/cart/:email', requireAuth, async (req,res) => {
+	const userRef = db.collection('users');
+	const snapshot = await userRef.where('email', '==', req.params.email).get();
+	const userCart = snapshot.docs.map((doc) => doc.data().cart);
+	res.status(200).send({ userCart:  userCart});
 });
 
 // make changes in user cart
