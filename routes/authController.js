@@ -16,7 +16,7 @@ const signUp = async (req, res) => {
 	}
 
 	const hashedPassword = await Password.toHash(password);
-	const data = { email, password: hashedPassword, username };
+	const data = { email, password: hashedPassword, username , cart:[]};
 
 	await db.collection('users').doc().set(data);
 

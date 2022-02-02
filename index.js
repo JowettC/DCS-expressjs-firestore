@@ -81,16 +81,38 @@ app.get('/api/products', async (req,res) => {
 });
 
 // get items in user's cart
-app.get('/api/cart/:email', requireAuth, async (req,res) => {
+app.get('/api/cart/:email', async (req,res) => {
 	const userRef = db.collection('users');
 	const snapshot = await userRef.where('email', '==', req.params.email).get();
+	if (snapshot.empty) {
+		res.status(404).send({
+			msg: "No existing Email"
+		})
+		return;
+	  }  
 	const userCart = snapshot.docs.map((doc) => doc.data().cart);
 	res.status(200).send({ userCart:  userCart});
 });
 
 // make changes in user cart
-app.post('/api/cart', requireAuth, async (req,res) => {
+app.post('/api/cart/:email', async (req,res) => {
+	data = req.body;
+	email = req.params.email;
 	
+	const userRef = db.collection('users');
+	const snapshot = await userRef.where('email', '==', req.params.email).get()
+	if (snapshot.empty) {
+		res.status(404).send({
+			msg: "No existing Email"
+		})
+		return;
+	  }  
+	const doc_id = snapshot.docs.map((doc) => doc.id);
+	console.log(doc_id)
+	userRef.doc(doc_id[0]).update({
+		cart:data.items
+	})
+	res.status(200).send({data:data.items});
 });
 
 app.all('*', () => {
