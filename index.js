@@ -108,7 +108,6 @@ app.post('/api/cart/:email', async (req,res) => {
 		return;
 	  }  
 	const doc_id = snapshot.docs.map((doc) => doc.id);
-	console.log(doc_id)
 	userRef.doc(doc_id[0]).update({
 		cart:data.items
 	})
