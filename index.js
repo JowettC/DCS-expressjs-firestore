@@ -76,7 +76,7 @@ app.get('/api/products', async (req,res) => {
 	const snapshot = await itemRef.get();
 	const items = await snapshot.docs.map((doc) => doc.data());
 	// console.log(items)
-	res.status(200).send({ items:  items});
+	res.status(200).send(items);
 	
 });
 
