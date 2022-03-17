@@ -83,6 +83,7 @@ app.get('/api/products', async (req,res) => {
 // get items in user's cart
 app.get('/api/cart/:email', async (req,res) => {
 	const userRef = db.collection('users');
+	
 	const snapshot = await userRef.where('email', '==', req.params.email).get();
 	if (snapshot.empty) {
 		res.status(404).send({
@@ -90,8 +91,9 @@ app.get('/api/cart/:email', async (req,res) => {
 		})
 		return;
 	  }  
+	// many ways to extract the data from the snapshot, this is just one of the ways, for more information you might want to visit firestore documentation
 	const userCart = snapshot.docs.map((doc) => doc.data().cart);
-	res.status(200).send({ userCart:  userCart});
+	res.status(200).send({ userCart:  userCart[0]});
 });
 
 // make changes in user cart
